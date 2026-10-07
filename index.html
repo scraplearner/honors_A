@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisHealth AI | Patient Risk Prediction & Healthcare Analytics</title>
+  <meta name="description" content="AI-Based Patient Risk Prediction and Healthcare Analytics System with Google Gemini Clinical Intelligence.">
+  
+  <!-- Soft, Neutral, Modern Healthcare Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheets (Pure Clean Light Theme) -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/print.css" media="print">
+</head>
+<body class="theme-light">
+  <!-- Environment Config Loader -->
+  <script src="env.js"></script>
+
+  <!-- App Container -->
+  <div class="app-layout">
+    
+    <!-- Top Header Navigation -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-titles">
+          <div class="brand-name">AEGIS<span class="brand-accent">HEALTH</span> <span class="badge-ai">AI</span></div>
+          <div class="brand-subtitle">Patient Risk Prediction & Clinical Decision Support</div>
+        </div>
+      </div>
+
+      <!-- Prominent Header Action: Big & Pronounced Add Patient Button -->
+      <div class="header-actions">
+        <button class="btn btn-add-patient-hero" id="btnNewPatient">
+          <svg class="icon-hero" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+          </svg>
+          <span>Add New Patient</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="app-nav">
+      <div class="nav-links">
+        <button class="nav-tab active" data-tab="tab-patient-analysis">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+          Patient Risk Prediction & Clinical Intelligence
+          <span class="active-patient-pill" id="navActivePatientName">Loading Patient...</span>
+        </button>
+
+        <button class="nav-tab" data-tab="tab-cohort-manager">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          </svg>
+          Patient Cohort Registry
+        </button>
+      </div>
+    </nav>
+
+    <!-- App Body Content -->
+    <main class="app-content">
+
+      <!-- ======================================================== -->
+      <!-- VIEW 1: PATIENT RISK PREDICTION & CDS WORKSPACE          -->
+      <!-- ======================================================== -->
+      <section id="tab-patient-analysis" class="tab-pane active">
+        
+        <!-- Patient Selector Strip -->
+        <div class="patient-select-bar">
+          <div class="select-wrapper">
+            <label for="patientSelector">Select Inpatient Case:</label>
+            <select id="patientSelector" class="form-select">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+
+          <div class="patient-quick-stats" id="activePatientBanner">
+            <!-- Dynamically populated patient bio -->
+          </div>
+
+          <div class="bar-actions">
+            <button class="btn btn-outline" id="btnPrintReport">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+              </svg>
+              Export Clinical Report
+            </button>
+          </div>
+        </div>
+
+        <!-- 3-Column Patient Clinical Dossier -->
+        <div class="clinical-workspace-grid">
+          
+          <!-- Left Column: Physiological Vitals & Lab Biomarkers -->
+          <div class="col-patient-vitals">
+            
+            <!-- Vitals Card -->
+            <div class="card mb-4">
+              <div class="card-header">
+                <h3 class="card-title">Real-Time Vitals Stream</h3>
+                <span class="badge badge-success pulse-badge">Monitored</span>
+              </div>
+              <div class="card-body">
+                <div class="vital-tiles-grid" id="vitalTilesContainer">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Lab Biomarkers Card -->
+            <div class="card mb-4">
+              <div class="card-header">
+                <h3 class="card-title">Laboratory Biomarkers</h3>
+                <span class="badge badge-subtle">Recent Lab Draw</span>
+              </div>
+              <div class="card-body">
+                <div class="biomarkers-table-wrapper">
+                  <table class="clinical-table" id="biomarkersTable">
+                    <thead>
+                      <tr>
+                        <th>Biomarker</th>
+                        <th>Value</th>
+                        <th>Reference</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="biomarkersTableBody">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Medical History & Active Medications -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Comorbidities & Medications</h3>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <div class="micro-label">Documented Chronic Conditions</div>
+                  <div class="tags-cloud" id="chronicConditionsTags">
+                    <!-- Populated by JS -->
+                  </div>
+                </div>
+                <div>
+                  <div class="micro-label">Active Medication Regimen</div>
+                  <div class="tags-cloud" id="activeMedicationsTags">
+                    <!-- Populated by JS -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Middle Column: Multivariable Algorithmic Risk Scores & Organ Stress Radar -->
+          <div class="col-patient-algorithms">
+            
+            <!-- Composite Risk Gauge Card -->
+            <div class="card mb-4">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Composite Clinical Acuity Index</h3>
+                  <p class="card-subtitle">Synthesized multivariable physiological risk index</p>
+                </div>
+              </div>
+              <div class="card-body text-center">
+                <div class="gauge-container">
+                  <canvas id="gaugeCanvas" width="280" height="160"></canvas>
+                  <div class="gauge-center-text">
+                    <div class="gauge-score" id="patientCompositeScore">--</div>
+                    <div class="gauge-badge" id="patientCompositeTier">Calculating...</div>
+                  </div>
+                </div>
+                <div class="gauge-scale-legend">
+                  <span>0 (Low)</span>
+                  <span>50 (Moderate)</span>
+                  <span>75 (High)</span>
+                  <span>100 (Critical)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Clinical Sub-Score Indices -->
+            <div class="card mb-4">
+              <div class="card-header">
+                <h3 class="card-title">Validated Predictive Scores</h3>
+                <span class="badge badge-subtle">Clinical Guidelines</span>
+              </div>
+              <div class="card-body">
+                <div class="validated-scores-list" id="validatedScoresList">
+                  <!-- Populated by JS: ASCVD, qSOFA, NEWS2, Charlson Index, AKI/CKD Stage -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Organ Stress Radar Chart -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Organ System Stress Matrix</h3>
+                <span class="badge badge-subtle">5 Domains</span>
+              </div>
+              <div class="card-body">
+                <div class="radar-chart-container">
+                  <canvas id="organRadarCanvas" width="300" height="260"></canvas>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Gemini AI Deep Clinical Reasoning & Action Plan (Automated) -->
+          <div class="col-patient-ai">
+            
+            <div class="card ai-dossier-card">
+              <div class="card-header header-ai">
+                <div class="ai-header-title">
+                  <div class="ai-sparkle">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="card-title">AI Clinical Intelligence</h3>
+                    <p class="card-subtitle">Automated CDS reasoning, differential diagnosis & explainability</p>
+                  </div>
+                </div>
+                <div class="header-ai-actions">
+                  <button class="btn btn-primary btn-sm" id="btnGenerateAiReport">
+                    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Generate Report
+                  </button>
+                </div>
+              </div>
+
+              <!-- AI Status / Loading & Content State -->
+              <div class="card-body" id="aiResultsContainer">
+
+                <!-- AI Ready Prompt State (Initial or upon patient change) -->
+                <div class="ai-idle-placeholder" id="aiReadyState">
+                  <div class="idle-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                  </div>
+                  <h4 id="aiReadyPatientTitle">Ready to Generate Clinical AI Report</h4>
+                  <p class="text-muted text-sm" id="aiReadyPatientDesc">Click <strong>"Generate Report"</strong> to send this patient's vitals, biomarkers, and clinical history to the API for personalized predictive diagnosis.</p>
+                  <button class="btn btn-primary btn-sm mt-3" id="btnGenerateReportCenter">
+                    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    Generate Report
+                  </button>
+                </div>
+
+                <div class="ai-loading-container hidden" id="aiLoadingState">
+                  <div class="medical-pulse-spinner">
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <h4 class="mt-3" id="aiLoadingTitle">Sending Patient Data to AI API...</h4>
+                  <p class="text-muted text-sm">Evaluating symptoms, likely diseases, and diagnostic recommendations</p>
+                </div>
+
+                <!-- Structured AI Response View -->
+                <div class="ai-content-view hidden" id="aiContentView">
+                  
+                  <!-- Executive Clinical Synthesis (Personalized) -->
+                  <div class="ai-section">
+                    <div class="ai-sec-title">
+                      <svg class="icon-sm text-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                      Executive Clinical Synthesis
+                    </div>
+                    <div class="ai-narrative-box" id="aiExecutiveSummary">
+                      Loading clinical synthesis...
+                    </div>
+                  </div>
+
+                  <!-- Likely Diseases to Occur -->
+                  <div class="ai-section">
+                    <div class="ai-sec-title">
+                      <svg class="icon-sm text-rose" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                      Likely Disease / Condition to Occur
+                    </div>
+                    <div class="diff-diagnoses-list" id="aiLikelyDiseasesList">
+                      <!-- Populated dynamically -->
+                    </div>
+                  </div>
+
+                  <!-- Recommended Diagnosis & Workup -->
+                  <div class="ai-section">
+                    <div class="ai-sec-title">
+                      <svg class="icon-sm text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                      Recommended Diagnosis & Confirmatory Workup
+                    </div>
+                    <div class="recommended-tests-list" id="aiRecommendedDiagnosisList">
+                      <!-- Populated dynamically -->
+                    </div>
+                  </div>
+
+                  <!-- Key Identified Symptoms & Anomalies -->
+                  <div class="ai-section">
+                    <div class="ai-sec-title">
+                      <svg class="icon-sm text-amber" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                      Identified Symptoms & Biomarker Anomalies
+                    </div>
+                    <div class="xai-drivers-list" id="aiRiskDriversList">
+                      <!-- Populated dynamically -->
+                    </div>
+                  </div>
+
+                  <!-- Tiered Treatment & Action Plan -->
+                  <div class="ai-section">
+                    <div class="ai-sec-title">
+                      <svg class="icon-sm text-success" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      Tiered Clinical Action Plan
+                    </div>
+                    <div class="action-plan-boxes" id="aiActionPlanList">
+                      <!-- Populated dynamically -->
+                    </div>
+                  </div>
+
+                  <!-- ICD-10 & Medication Alerts -->
+                  <div class="ai-section">
+                    <div class="ai-sec-title">
+                      <svg class="icon-sm text-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                      Suggested ICD-10 Codes & Drug Interactions
+                    </div>
+                    <div class="icd-tags-container" id="aiIcdTags">
+                      <!-- Populated dynamically -->
+                    </div>
+                    <div class="drug-alert-box mt-2" id="aiDrugAlerts">
+                      <!-- Populated dynamically -->
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- VIEW 2: PATIENT COHORT REGISTRY & DIRECTORY              -->
+      <!-- ======================================================== -->
+      <section id="tab-cohort-manager" class="tab-pane">
+        
+        <div class="cohort-header-actions">
+          <div class="search-filter-group">
+            <div class="search-input-wrapper">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              <input type="text" id="cohortSearchInput" placeholder="Search by name, MRN, diagnosis, or ward..." class="form-input">
+            </div>
+
+            <select id="filterWardSelect" class="form-select form-select-sm">
+              <option value="all">All Departments</option>
+              <option value="Cardiology">Cardiology ICU</option>
+              <option value="Emergency">Emergency Triage</option>
+              <option value="Nephrology">Nephrology Step-Down</option>
+              <option value="Pulmonology">Pulmonology Unit</option>
+              <option value="General">General Medical</option>
+            </select>
+
+            <select id="filterRiskSelect" class="form-select form-select-sm">
+              <option value="all">All Risk Tiers</option>
+              <option value="Critical">Critical (&ge;75)</option>
+              <option value="High">High (50-74)</option>
+              <option value="Moderate">Moderate (30-49)</option>
+              <option value="Low">Low (&lt;30)</option>
+            </select>
+          </div>
+
+          <div class="cohort-btns">
+            <button class="btn btn-primary" id="btnAddNewPatientFromCohort">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              Add New Inpatient
+            </button>
+          </div>
+        </div>
+
+        <!-- Cohort Master Table -->
+        <div class="card mt-3">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="clinical-table cohort-table" id="cohortMasterTable">
+                <thead>
+                  <tr>
+                    <th>Patient / MRN</th>
+                    <th>Age / Sex</th>
+                    <th>Ward & Bed</th>
+                    <th>Primary Diagnosis</th>
+                    <th>Systolic BP / HR</th>
+                    <th>Biomarkers (Key)</th>
+                    <th>Acuity Score</th>
+                    <th>Risk Tier</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="cohortTableBody">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: ADD / EDIT PATIENT DOSSIER                       -->
+  <!-- ======================================================== -->
+  <div class="modal-overlay hidden" id="modalPatientForm">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalPatientTitle">Register New Clinical Inpatient</h3>
+        <button class="btn-close" id="btnClosePatientModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="newPatientForm">
+          
+          <div class="form-section-title">Patient Identification & Demographics</div>
+          <div class="form-row-3">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" id="formName" required class="form-input" placeholder="e.g. Robert M. Hayes">
+            </div>
+            <div class="form-group">
+              <label>Age (Years) *</label>
+              <input type="number" id="formAge" min="1" max="110" required class="form-input" placeholder="e.g. 64">
+            </div>
+            <div class="form-group">
+              <label>Biological Sex *</label>
+              <select id="formGender" class="form-select">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row-3">
+            <div class="form-group">
+              <label>Medical Record Number (MRN) *</label>
+              <input type="text" id="formMrn" required class="form-input" placeholder="e.g. MRN-99824">
+            </div>
+            <div class="form-group">
+              <label>Department / Ward *</label>
+              <select id="formWard" class="form-select">
+                <option value="Cardiology">Cardiology ICU</option>
+                <option value="Emergency">Emergency Triage</option>
+                <option value="Nephrology">Nephrology Step-Down</option>
+                <option value="Pulmonology">Pulmonology Unit</option>
+                <option value="General">General Medical</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Bed Allocation</label>
+              <input type="text" id="formBed" class="form-input" placeholder="e.g. Bed ICU-04">
+            </div>
+          </div>
+
+          <div class="form-section-title">Bedside Vital Signs</div>
+          <div class="form-row-4">
+            <div class="form-group">
+              <label>Systolic BP (mmHg) *</label>
+              <input type="number" id="formSysBP" min="60" max="260" required class="form-input" value="135">
+            </div>
+            <div class="form-group">
+              <label>Diastolic BP (mmHg) *</label>
+              <input type="number" id="formDiaBP" min="30" max="150" required class="form-input" value="88">
+            </div>
+            <div class="form-group">
+              <label>Heart Rate (bpm) *</label>
+              <input type="number" id="formHR" min="30" max="220" required class="form-input" value="82">
+            </div>
+            <div class="form-group">
+              <label>SpO2 (%) *</label>
+              <input type="number" id="formSpO2" min="50" max="100" required class="form-input" value="96">
+            </div>
+          </div>
+
+          <div class="form-row-3">
+            <div class="form-group">
+              <label>Respiratory Rate (/min) *</label>
+              <input type="number" id="formRespRate" min="6" max="60" required class="form-input" value="18">
+            </div>
+            <div class="form-group">
+              <label>Temperature (&deg;C) *</label>
+              <input type="number" step="0.1" id="formTemp" min="30" max="43" required class="form-input" value="37.0">
+            </div>
+            <div class="form-group">
+              <label>Smoking History</label>
+              <select id="formSmoker" class="form-select">
+                <option value="No">Non-Smoker</option>
+                <option value="Former">Former Smoker</option>
+                <option value="Current">Current Smoker</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-section-title">Critical Laboratory Biomarkers</div>
+          <div class="form-row-4">
+            <div class="form-group">
+              <label>Blood Glucose (mg/dL)</label>
+              <input type="number" id="formGlucose" class="form-input" value="128">
+            </div>
+            <div class="form-group">
+              <label>Serum Creatinine (mg/dL)</label>
+              <input type="number" step="0.05" id="formCreatinine" class="form-input" value="1.1">
+            </div>
+            <div class="form-group">
+              <label>eGFR (mL/min/1.73m&sup2;)</label>
+              <input type="number" id="formEgfr" class="form-input" value="78">
+            </div>
+            <div class="form-group">
+              <label>Troponin-I (ng/mL)</label>
+              <input type="number" step="0.01" id="formTroponin" class="form-input" value="0.02">
+            </div>
+          </div>
+
+          <div class="form-row-3">
+            <div class="form-group">
+              <label>WBC Count (&times;10&sup3;/&mu;L)</label>
+              <input type="number" step="0.1" id="formWbc" class="form-input" value="7.4">
+            </div>
+            <div class="form-group">
+              <label>Serum Lactate (mmol/L)</label>
+              <input type="number" step="0.1" id="formLactate" class="form-input" value="1.2">
+            </div>
+            <div class="form-group">
+              <label>hs-CRP (mg/L)</label>
+              <input type="number" step="0.1" id="formCrp" class="form-input" value="3.1">
+            </div>
+          </div>
+
+          <div class="form-section-title">Clinical History & Active Regimen</div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Primary Admission Diagnosis & History</label>
+              <textarea id="formHistory" rows="2" class="form-input" placeholder="e.g. Type 2 Diabetes Mellitus, Essential Hypertension, mild angina on exertion."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Active Medications (comma separated)</label>
+              <textarea id="formMedications" rows="2" class="form-input" placeholder="e.g. Metformin 500mg, Lisinopril 10mg, Atorvastatin 20mg"></textarea>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="btnCancelPatientModal">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-lg">Save & Calculate Risk Profile</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JavaScript Modules (Clean, Separated Concerns) -->
+  <script src="js/patients-data.js"></script>
+  <script src="js/risk-engine.js"></script>
+  <script src="js/gemini.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/report-generator.js"></script>
+  <script src="js/ui-manager.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

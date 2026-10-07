@@ -1,0 +1,368 @@
+/* ==========================================================================
+   AegisHealth AI - Main Stylesheet (Clean, Soft Healthcare Theme - Light Contrast)
+   ========================================================================== */
+
+:root {
+  /* Canvas & Surfaces */
+  --bg-dark: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-card-border: #e2e8f0;
+  --bg-glass: rgba(255, 255, 255, 0.95);
+  --glass-blur: blur(8px);
+
+  /* Healthy Healthcare Color Palette */
+  --health-teal: #0d9488;
+  --health-teal-dark: #0f766e;
+  --health-emerald: #059669;
+  --health-emerald-dark: #047857;
+  --primary: #0284c7;
+  --primary-glow: rgba(2, 132, 199, 0.15);
+  --teal-glow: rgba(13, 148, 136, 0.18);
+  --emerald-glow: rgba(5, 150, 105, 0.18);
+
+  /* Soft, High-Contrast Clinical Status Tones */
+  --status-critical: #e11d48;
+  --status-critical-glow: rgba(225, 29, 72, 0.2);
+  --status-critical-bg: #ffe4e6;
+  --status-warning: #d97706;
+  --status-warning-glow: rgba(217, 119, 6, 0.2);
+  --status-warning-bg: #fef3c7;
+  --status-info: #0284c7;
+  --status-info-glow: rgba(2, 132, 199, 0.2);
+  --status-info-bg: #e0f2fe;
+  --status-stable: #059669;
+  --status-stable-glow: rgba(5, 150, 105, 0.2);
+  --status-stable-bg: #d1fae5;
+
+  /* Typography Colors */
+  --text-main: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+
+  /* Soft Neutral Typography */
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Plus Jakarta Sans', var(--font-sans);
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Elevation & Shadows */
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+  --shadow-md: 0 4px 8px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 20px -3px rgba(15, 23, 42, 0.09), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
+  --shadow-hero: 0 6px 20px rgba(13, 148, 136, 0.35);
+
+  /* Borders & Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-full: 9999px;
+  --transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-size: 15.5px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle, Soft Ambient Tint */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 400px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(13, 148, 136, 0.07), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Base App Layout */
+.app-layout {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Top App Header */
+.app-header {
+  height: 78px;
+  padding: 0 2.5rem;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--bg-card-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: var(--shadow-sm);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgba(13, 148, 136, 0.15), rgba(5, 150, 105, 0.25));
+  border: 1.5px solid var(--health-teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--health-teal-dark);
+}
+
+.brand-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.brand-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-main);
+  line-height: 1.1;
+}
+
+.brand-accent {
+  color: var(--health-teal);
+}
+
+.badge-ai {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: #d1fae5;
+  border: 1px solid #10b981;
+  color: #047857;
+}
+
+.brand-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* BIG AND PRONOUNCED Add Patient Button */
+.btn-add-patient-hero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: var(--shadow-hero);
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: -0.01em;
+}
+
+.btn-add-patient-hero:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.45);
+  transform: translateY(-2px);
+}
+
+.btn-add-patient-hero:active {
+  transform: translateY(0);
+}
+
+.icon-hero {
+  width: 22px;
+  height: 22px;
+}
+
+/* Navigation Bar */
+.app-nav {
+  height: 56px;
+  padding: 0 2.5rem;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--bg-card-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.nav-tab svg {
+  width: 18px;
+  height: 18px;
+}
+
+.nav-tab:hover {
+  color: var(--text-main);
+  background: #f1f5f9;
+}
+
+.nav-tab.active {
+  color: #0f172a;
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.active-patient-pill {
+  font-size: 0.75rem;
+  background: var(--status-info-bg);
+  color: var(--status-info);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* App Main Content Area */
+.app-content {
+  flex: 1;
+  padding: 2rem 2.5rem 3rem 2.5rem;
+  max-width: 1650px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.tab-pane {
+  display: none;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cards & Layout */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  padding: 1.25rem 1.6rem;
+  border-bottom: 1px solid var(--bg-card-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.015em;
+}
+
+.card-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.card-body {
+  padding: 1.4rem 1.6rem;
+  flex: 1;
+}
+
+.card-body.p-0 {
+  padding: 0;
+}
+
+/* Responsive queries */
+@media (max-width: 992px) {
+  .app-header {
+    padding: 0 1.25rem;
+    height: auto;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .app-nav {
+    padding: 0 1.25rem;
+    overflow-x: auto;
+  }
+  .app-content {
+    padding: 1.25rem;
+  }
+}
