@@ -99,7 +99,7 @@ class UiManager {
     document.getElementById("patientCompositeScore").textContent = risk.score;
     const tierBadge = document.getElementById("patientCompositeTier");
     tierBadge.textContent = risk.tier;
-    tierBadge.className = `gauge-badge ${risk.tierColor}`;
+    tierBadge.className = `gauge-badge header-gauge-badge ${risk.tierColor}`;
     window.ChartEngine.drawAcuityGauge("gaugeCanvas", risk.score);
 
     // Render Validated Score List
@@ -108,43 +108,29 @@ class UiManager {
     // Render Organ Stress Radar
     window.ChartEngine.drawOrganRadar("organRadarCanvas", risk.organMatrix);
 
-    // If AI results already exist for this patient, show them. Otherwise show ready prompt.
-    if (this.currentAiResults && this.currentAiResults.patientId === patient.id) {
-      this.displayAiFindings(this.currentAiResults.data);
-    } else {
-      const readyState = document.getElementById("aiReadyState");
-      const loadingState = document.getElementById("aiLoadingState");
-      const contentView = document.getElementById("aiContentView");
-      const titleEl = document.getElementById("aiReadyPatientTitle");
-      const descEl = document.getElementById("aiReadyPatientDesc");
+    // Render Patient Edit Audit History and Update Count Badge
+    this.renderAuditHistory(patient);
 
-      if (readyState) readyState.classList.remove("hidden");
-      if (loadingState) loadingState.classList.add("hidden");
-      if (contentView) contentView.classList.add("hidden");
-
-      if (titleEl) titleEl.textContent = `Ready to Generate Clinical AI Report for ${patient.name}`;
-      if (descEl) descEl.innerHTML = `Click <strong>"Generate Report"</strong> to send ${patient.name}'s vitals, biomarkers, and clinical history to the AI API for personalized predictive diagnosis.`;
+    // Automatically synthesize and display the AI Clinical Intelligence Dossier immediately
+    try {
+      const aiResults = await window.GeminiService.analyzePatient(patient, risk);
+      this.currentAiResults = {
+        patientId: patient.id,
+        data: aiResults
+      };
+      this.displayAiFindings(aiResults);
+    } catch (err) {
+      console.error("Clinical intelligence reasoning error:", err);
     }
   }
 
   /**
-   * Called when user clicks "Generate Report" button:
-   * Sends the patient's data to the Gemini API key and renders the prediction dossier.
+   * Re-evaluates patient data with the CDS Reasoning Engine
    */
   async generateAiReportForActivePatient() {
     const patient = window.PatientStore.getActivePatient();
     if (!patient) return;
     const risk = window.RiskEngine.calculateCompositeAcuity(patient);
-
-    const readyState = document.getElementById("aiReadyState");
-    const loadingState = document.getElementById("aiLoadingState");
-    const contentView = document.getElementById("aiContentView");
-    const loadingTitle = document.getElementById("aiLoadingTitle");
-
-    if (readyState) readyState.classList.add("hidden");
-    if (contentView) contentView.classList.add("hidden");
-    if (loadingState) loadingState.classList.remove("hidden");
-    if (loadingTitle) loadingTitle.textContent = `Sending ${patient.name}'s data to Gemini API...`;
 
     try {
       const aiResults = await window.GeminiService.analyzePatient(patient, risk);
@@ -153,12 +139,10 @@ class UiManager {
         data: aiResults
       };
       this.displayAiFindings(aiResults);
-      this.showToast(`AI Prediction Report generated for ${patient.name}!`, "success");
+      this.showToast(`AI Clinical Decision Report updated for ${patient.name}!`, "success");
     } catch (err) {
       console.error("AI report generation error:", err);
-      if (loadingState) loadingState.classList.add("hidden");
-      if (readyState) readyState.classList.remove("hidden");
-      this.showToast(`Error calling API: ${err.message}`, "danger");
+      this.showToast(`Clinical analysis error: ${err.message}`, "danger");
     }
   }
 
@@ -282,14 +266,7 @@ class UiManager {
   }
 
   displayAiFindings(aiData) {
-    const readyState = document.getElementById("aiReadyState");
-    if (readyState) readyState.classList.add("hidden");
-
-    const loadingState = document.getElementById("aiLoadingState");
-    if (loadingState) loadingState.classList.add("hidden");
-
-    const view = document.getElementById("aiContentView");
-    if (view) view.classList.remove("hidden");
+    if (!aiData) return;
 
     // 1. Executive Summary: Personalized "Based on the data of [Patient Name]..."
     const execSummary = document.getElementById("aiExecutiveSummary");
@@ -300,15 +277,20 @@ class UiManager {
     if (likelyList) {
       const diseases = aiData.likelyDiseases || [];
       if (diseases.length > 0) {
-        likelyList.innerHTML = diseases.map(d => `
-          <div class="diff-card">
-            <div>
-              <div class="diff-name">${d.disease}</div>
-              <div class="diff-reason">${d.rationale}</div>
+        likelyList.innerHTML = diseases.map(d => {
+          const isHigh = d.likelihood.includes('High') || d.likelihood.includes('Critical');
+          return `
+            <div class="diff-card ${isHigh ? 'primary' : ''}">
+              <div class="diff-content">
+                <div class="diff-header-row">
+                  <span class="diff-name">${d.disease}</span>
+                  <span class="badge ${isHigh ? 'badge-danger' : 'badge-warning'} diff-badge">${d.likelihood}</span>
+                </div>
+                <div class="diff-reason">${d.rationale}</div>
+              </div>
             </div>
-            <span class="badge ${d.likelihood.includes('High') ? 'badge-danger' : 'badge-warning'}">${d.likelihood}</span>
-          </div>
-        `).join("");
+          `;
+        }).join("");
       } else {
         likelyList.innerHTML = `<span class="text-sm text-muted">No acute disease decompensation identified.</span>`;
       }
@@ -323,13 +305,16 @@ class UiManager {
           const testName = typeof t === "string" ? t : t.test;
           const urgency = typeof t === "string" ? "Recommended" : (t.urgency || "Urgent");
           const purpose = typeof t === "string" ? "Confirmatory clinical investigation" : (t.purpose || "Clinical evaluation");
+          const isStat = urgency.toLowerCase().includes("stat") || urgency.toLowerCase().includes("crit");
           return `
-            <div class="test-card">
-              <div>
-                <div class="test-name">${testName}</div>
+            <div class="test-card ${isStat ? 'test-stat' : ''}">
+              <div class="test-content">
+                <div class="test-header-row">
+                  <span class="test-name">${testName}</span>
+                  <span class="badge ${isStat ? 'badge-danger' : 'badge-primary'} test-badge">${urgency}</span>
+                </div>
                 <div class="test-purpose">${purpose}</div>
               </div>
-              <span class="badge badge-primary">${urgency}</span>
             </div>
           `;
         }).join("");
@@ -456,12 +441,124 @@ class UiManager {
           <td>
             <div class="btn-group-sm">
               <button class="btn btn-outline btn-xs" onclick="window.App.selectPatientAndInspect('${p.id}')">Analyze</button>
+              <button class="btn btn-outline btn-xs" onclick="window.App.openEditPatientModal('${p.id}')">Edit</button>
               <button class="btn btn-secondary btn-xs text-danger" onclick="window.App.deletePatient('${p.id}')">&times;</button>
             </div>
           </td>
         </tr>
       `;
     }).join("");
+  }
+
+  /**
+   * Render Patient Edit Audit History and Update Count Badge
+   */
+  renderAuditHistory(patient) {
+    if (!patient) return;
+    const countBadge = document.getElementById("auditCountBadge");
+    const subTitle = document.getElementById("auditPatientSubtitle");
+    const statCount = document.getElementById("auditStatCount");
+    const statLastDate = document.getElementById("auditStatLastDate");
+    const historyList = document.getElementById("auditHistoryList");
+
+    const logs = window.PatientStore.getAuditLogsForPatient(patient.id);
+    const count = logs.length;
+
+    if (countBadge) countBadge.textContent = `${count}`;
+    if (subTitle) subTitle.textContent = `Tracking modifications for ${patient.name} (${patient.mrn})`;
+    if (statCount) statCount.textContent = `${count}`;
+    if (statLastDate) statLastDate.textContent = count > 0 ? logs[0].date : "Never";
+
+    if (!historyList) return;
+
+    if (count === 0) {
+      historyList.innerHTML = `
+        <div class="audit-empty-state">
+          <div class="audit-empty-icon">
+            <svg style="width:36px;height:36px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+          <div><strong>No edit history recorded yet</strong></div>
+          <div class="text-xs text-muted mt-1">Click "Edit Patient Info" above to modify vitals, biomarkers, or patient demographics.</div>
+        </div>
+      `;
+      return;
+    }
+
+    historyList.innerHTML = logs.map(log => `
+      <div class="audit-entry-card">
+        <div class="audit-entry-header">
+          <span class="audit-entry-badge">Edit #${log.editNumber}</span>
+          <span class="audit-entry-date">${log.date}</span>
+        </div>
+        <div class="audit-diff-list">
+          ${log.changes.length > 0 ? log.changes.map(c => `
+            <div class="audit-diff-item">
+              <span class="diff-field">${c.field}:</span>
+              <span class="diff-prev">${c.from}</span>
+              <span class="diff-arrow">&rarr;</span>
+              <span class="diff-curr">${c.to}</span>
+            </div>
+          `).join("") : `<div class="text-xs text-muted">Dossier verified with no field changes.</div>`}
+        </div>
+      </div>
+    `).join("");
+  }
+
+  /**
+   * Pre-populate and open the Patient modal in Edit mode
+   */
+  openEditPatientModal(patient) {
+    if (!patient) return;
+
+    const modal = document.getElementById("modalPatientForm");
+    const modalTitle = document.getElementById("modalPatientTitle");
+    const submitBtn = document.getElementById("btnSubmitPatient");
+    const modeInput = document.getElementById("formPatientMode");
+    const idInput = document.getElementById("formPatientId");
+
+    if (modalTitle) modalTitle.textContent = `Edit Patient Clinical Information — ${patient.name} (${patient.mrn})`;
+    if (submitBtn) submitBtn.textContent = `Save Changes & Recalculate Risk`;
+    if (modeInput) modeInput.value = "edit";
+    if (idInput) idInput.value = patient.id;
+
+    // Fill form fields
+    const setValue = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.value = (val !== undefined && val !== null) ? val : "";
+    };
+
+    setValue("formName", patient.name);
+    setValue("formAge", patient.age);
+    setValue("formGender", patient.gender);
+    setValue("formMrn", patient.mrn);
+    setValue("formWard", patient.ward);
+    setValue("formBed", patient.bed);
+    setValue("formSmoker", patient.smoking || "No");
+
+    // Vitals
+    setValue("formSysBP", patient.vitals?.sysBP || 120);
+    setValue("formDiaBP", patient.vitals?.diaBP || 80);
+    setValue("formHR", patient.vitals?.heartRate || 75);
+    setValue("formSpO2", patient.vitals?.spO2 || 98);
+    setValue("formRespRate", patient.vitals?.respRate || 16);
+    setValue("formTemp", patient.vitals?.temp || 37.0);
+
+    // Biomarkers
+    setValue("formGlucose", patient.biomarkers?.glucose || 100);
+    setValue("formCreatinine", patient.biomarkers?.creatinine || 1.0);
+    setValue("formEgfr", patient.biomarkers?.egfr || 90);
+    setValue("formTroponin", patient.biomarkers?.troponin || 0.01);
+    setValue("formWbc", patient.biomarkers?.wbc || 7.0);
+    setValue("formLactate", patient.biomarkers?.lactate || 1.1);
+    setValue("formCrp", patient.biomarkers?.crp || 2.0);
+
+    // History and Medications
+    setValue("formHistory", (patient.history || []).join(", "));
+    setValue("formMedications", (patient.medications || []).join(", "));
+
+    if (modal) modal.classList.remove("hidden");
   }
 }
 

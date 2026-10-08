@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AegisHealth AI | Patient Risk Prediction & Healthcare Analytics</title>
-  <meta name="description" content="AI-Based Patient Risk Prediction and Healthcare Analytics System with Google Gemini Clinical Intelligence.">
+  <meta name="description" content="AI-Based Patient Risk Prediction and Healthcare Analytics System with Dynamic Clinical Decision Support (CDS) Intelligence.">
   
   <!-- Soft, Neutral, Modern Healthcare Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,9 +17,6 @@
   <link rel="stylesheet" href="css/print.css" media="print">
 </head>
 <body class="theme-light">
-  <!-- Environment Config Loader -->
-  <script src="env.js"></script>
-
   <!-- App Container -->
   <div class="app-layout">
     
@@ -48,7 +45,7 @@
       </div>
     </header>
 
-    <!-- Main Navigation Tabs -->
+    <!-- Main Navigation Tabs & Action Controls -->
     <nav class="app-nav">
       <div class="nav-links">
         <button class="nav-tab active" data-tab="tab-patient-analysis">
@@ -66,6 +63,62 @@
           Patient Cohort Registry
         </button>
       </div>
+
+      <!-- Navigation Tab Section Action Suite -->
+      <div class="nav-patient-actions">
+        <!-- Edit Patient Information Button -->
+        <button class="btn btn-outline btn-sm" id="btnEditPatient" title="Edit Clinical Intake Data">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
+          <span>Edit Patient Info</span>
+        </button>
+
+        <!-- Click Opening Audit History Box -->
+        <div class="audit-history-box" id="auditHistoryBox">
+          <button class="btn btn-outline btn-sm btn-audit-toggle" id="btnAuditToggle" title="View Patient Edit Audit History & Diffs">
+            <svg class="icon-sm text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>Edit History</span>
+            <span class="badge badge-primary audit-count-badge" id="auditCountBadge">0</span>
+          </button>
+
+          <!-- Dropdown / Popover -->
+          <div class="audit-popover hidden" id="auditHistoryPopover">
+            <div class="audit-popover-header">
+              <div class="audit-popover-title-group">
+                <div class="audit-popover-title">Patient Edit History & Audit Log</div>
+                <div class="audit-popover-subtitle" id="auditPatientSubtitle">Tracking changes for active patient</div>
+              </div>
+              <button type="button" class="btn-close-sm" id="btnCloseAuditPopover" aria-label="Close audit log">&times;</button>
+            </div>
+
+            <div class="audit-popover-stats">
+              <div class="audit-stat-chip">
+                <span class="audit-stat-label">Edits Completed</span>
+                <span class="audit-stat-val" id="auditStatCount">0</span>
+              </div>
+              <div class="audit-stat-chip">
+                <span class="audit-stat-label">Last Modified</span>
+                <span class="audit-stat-val text-xs" id="auditStatLastDate">Never</span>
+              </div>
+            </div>
+
+            <div class="audit-popover-body" id="auditHistoryList">
+              <!-- Dynamically populated edit history & diff items -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Export Clinical Report Button (Shifted here to the tab bar section) -->
+        <button class="btn btn-outline btn-sm" id="btnPrintReport" title="Export printable clinical dossier">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+          </svg>
+          <span>Export Clinical Report</span>
+        </button>
+      </div>
     </nav>
 
     <!-- App Body Content -->
@@ -76,7 +129,7 @@
       <!-- ======================================================== -->
       <section id="tab-patient-analysis" class="tab-pane active">
         
-        <!-- Patient Selector Strip -->
+        <!-- Patient Selector Strip (With Composite Clinical Acuity Index integrated in place of export button) -->
         <div class="patient-select-bar">
           <div class="select-wrapper">
             <label for="patientSelector">Select Inpatient Case:</label>
@@ -89,20 +142,34 @@
             <!-- Dynamically populated patient bio -->
           </div>
 
-          <div class="bar-actions">
-            <button class="btn btn-outline" id="btnPrintReport">
-              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
-              </svg>
-              Export Clinical Report
-            </button>
+          <!-- Composite Clinical Acuity Index (Shifted here in place of Export Clinical Report) -->
+          <div class="header-acuity-panel" id="headerAcuityPanel">
+            <div class="header-acuity-meta">
+              <h3 class="header-acuity-title">Composite Clinical Acuity Index</h3>
+              <p class="header-acuity-subtitle">Synthesized multivariable physiological risk index</p>
+            </div>
+            <div class="header-gauge-wrapper">
+              <div class="gauge-container header-gauge-container">
+                <canvas id="gaugeCanvas" width="220" height="120"></canvas>
+                <div class="gauge-center-text header-gauge-text">
+                  <div class="gauge-score header-gauge-score" id="patientCompositeScore">--</div>
+                  <div class="gauge-badge header-gauge-badge" id="patientCompositeTier">Calculating...</div>
+                </div>
+              </div>
+              <div class="gauge-scale-legend header-gauge-legend">
+                <span>0 (Low)</span>
+                <span>50 (Mod)</span>
+                <span>75 (High)</span>
+                <span>100 (Crit)</span>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- 3-Column Patient Clinical Dossier -->
         <div class="clinical-workspace-grid">
           
-          <!-- Left Column: Physiological Vitals & Lab Biomarkers -->
+          <!-- Column 1: Physiological Vitals & Comorbidities/Medications -->
           <div class="col-patient-vitals">
             
             <!-- Vitals Card -->
@@ -118,35 +185,13 @@
               </div>
             </div>
 
-            <!-- Lab Biomarkers Card -->
-            <div class="card mb-4">
+            <!-- Medical History & Active Medications (Shifted into place of Laboratory Biomarkers) -->
+            <div class="card card-pod mb-4">
               <div class="card-header">
-                <h3 class="card-title">Laboratory Biomarkers</h3>
-                <span class="badge badge-subtle">Recent Lab Draw</span>
-              </div>
-              <div class="card-body">
-                <div class="biomarkers-table-wrapper">
-                  <table class="clinical-table" id="biomarkersTable">
-                    <thead>
-                      <tr>
-                        <th>Biomarker</th>
-                        <th>Value</th>
-                        <th>Reference</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody id="biomarkersTableBody">
-                      <!-- Populated by JS -->
-                    </tbody>
-                  </table>
+                <div>
+                  <h3 class="card-title">Comorbidities & Medications</h3>
+                  <p class="card-subtitle">Documented chronic history and active pharmacological regimen</p>
                 </div>
-              </div>
-            </div>
-
-            <!-- Medical History & Active Medications -->
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">Comorbidities & Medications</h3>
               </div>
               <div class="card-body">
                 <div class="mb-3">
@@ -164,58 +209,67 @@
               </div>
             </div>
 
-          </div>
-
-          <!-- Middle Column: Multivariable Algorithmic Risk Scores & Organ Stress Radar -->
-          <div class="col-patient-algorithms">
-            
-            <!-- Composite Risk Gauge Card -->
-            <div class="card mb-4">
+            <!-- Multi-Organ Stress Radar Chart (Balanced in Column 1 for equal column heights) -->
+            <div class="card card-lens">
               <div class="card-header">
                 <div>
-                  <h3 class="card-title">Composite Clinical Acuity Index</h3>
-                  <p class="card-subtitle">Synthesized multivariable physiological risk index</p>
+                  <h3 class="card-title">Organ System Stress Matrix</h3>
+                  <p class="card-subtitle">5-Axis multivariable physiological stress radar</p>
                 </div>
-              </div>
-              <div class="card-body text-center">
-                <div class="gauge-container">
-                  <canvas id="gaugeCanvas" width="280" height="160"></canvas>
-                  <div class="gauge-center-text">
-                    <div class="gauge-score" id="patientCompositeScore">--</div>
-                    <div class="gauge-badge" id="patientCompositeTier">Calculating...</div>
-                  </div>
-                </div>
-                <div class="gauge-scale-legend">
-                  <span>0 (Low)</span>
-                  <span>50 (Moderate)</span>
-                  <span>75 (High)</span>
-                  <span>100 (Critical)</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Clinical Sub-Score Indices -->
-            <div class="card mb-4">
-              <div class="card-header">
-                <h3 class="card-title">Validated Predictive Scores</h3>
-                <span class="badge badge-subtle">Clinical Guidelines</span>
-              </div>
-              <div class="card-body">
-                <div class="validated-scores-list" id="validatedScoresList">
-                  <!-- Populated by JS: ASCVD, qSOFA, NEWS2, Charlson Index, AKI/CKD Stage -->
-                </div>
-              </div>
-            </div>
-
-            <!-- Multi-Organ Stress Radar Chart -->
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">Organ System Stress Matrix</h3>
                 <span class="badge badge-subtle">5 Domains</span>
               </div>
               <div class="card-body">
                 <div class="radar-chart-container">
                   <canvas id="organRadarCanvas" width="300" height="260"></canvas>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Column 2: Laboratory Biomarkers & Predictive Scores -->
+          <div class="col-patient-algorithms">
+            
+            <!-- Laboratory Biomarkers Card (Shifted in place of Composite Clinical Acuity Index, no horizontal scrolling) -->
+            <div class="card card-plate mb-4">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Laboratory Biomarkers</h3>
+                  <p class="card-subtitle">Recent inpatient lab panel & reference threshold evaluation</p>
+                </div>
+                <span class="badge badge-subtle">Recent Lab Draw</span>
+              </div>
+              <div class="card-body">
+                <div class="biomarkers-table-wrapper">
+                  <table class="clinical-table biomarkers-clean-table" id="biomarkersTable">
+                    <thead>
+                      <tr>
+                        <th>Biomarker</th>
+                        <th>Value</th>
+                        <th>Reference</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="biomarkersTableBody">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Clinical Sub-Score Indices -->
+            <div class="card card-stack">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Validated Predictive Scores</h3>
+                  <p class="card-subtitle">Standardized ICU / Step-Down prognostic calculations</p>
+                </div>
+                <span class="badge badge-subtle">Clinical Guidelines</span>
+              </div>
+              <div class="card-body">
+                <div class="validated-scores-list" id="validatedScoresList">
+                  <!-- Populated by JS: ASCVD, qSOFA, NEWS2, Charlson Index, AKI/CKD Stage -->
                 </div>
               </div>
             </div>
@@ -239,7 +293,7 @@
                   </div>
                 </div>
                 <div class="header-ai-actions">
-                  <button class="btn btn-primary btn-sm" id="btnGenerateAiReport">
+                  <button class="btn btn-primary btn-sm" id="btnGenerateAiReport" title="Generate Clinical Decision Support Report">
                     <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
@@ -248,41 +302,11 @@
                 </div>
               </div>
 
-              <!-- AI Status / Loading & Content State -->
+              <!-- AI Status / Content State (Directly Active & Populated) -->
               <div class="card-body" id="aiResultsContainer">
 
-                <!-- AI Ready Prompt State (Initial or upon patient change) -->
-                <div class="ai-idle-placeholder" id="aiReadyState">
-                  <div class="idle-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                    </svg>
-                  </div>
-                  <h4 id="aiReadyPatientTitle">Ready to Generate Clinical AI Report</h4>
-                  <p class="text-muted text-sm" id="aiReadyPatientDesc">Click <strong>"Generate Report"</strong> to send this patient's vitals, biomarkers, and clinical history to the API for personalized predictive diagnosis.</p>
-                  <button class="btn btn-primary btn-sm mt-3" id="btnGenerateReportCenter">
-                    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                    Generate Report
-                  </button>
-                </div>
-
-                <div class="ai-loading-container hidden" id="aiLoadingState">
-                  <div class="medical-pulse-spinner">
-                    <div class="pulse-ring"></div>
-                    <div class="pulse-icon">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-                      </svg>
-                    </div>
-                  </div>
-                  <h4 class="mt-3" id="aiLoadingTitle">Sending Patient Data to AI API...</h4>
-                  <p class="text-muted text-sm">Evaluating symptoms, likely diseases, and diagnostic recommendations</p>
-                </div>
-
-                <!-- Structured AI Response View -->
-                <div class="ai-content-view hidden" id="aiContentView">
+                <!-- Structured AI Response View (Always Active, Instant Analysis) -->
+                <div class="ai-content-view" id="aiContentView">
                   
                   <!-- Executive Clinical Synthesis (Personalized) -->
                   <div class="ai-section">
@@ -577,9 +601,12 @@
             </div>
           </div>
 
+          <input type="hidden" id="formPatientId" value="">
+          <input type="hidden" id="formPatientMode" value="create">
+
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" id="btnCancelPatientModal">Cancel</button>
-            <button type="submit" class="btn btn-primary btn-lg">Save & Calculate Risk Profile</button>
+            <button type="submit" class="btn btn-primary btn-lg" id="btnSubmitPatient">Save & Calculate Risk Profile</button>
           </div>
 
         </form>

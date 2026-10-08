@@ -16,9 +16,9 @@ class ClinicalCharts {
     const ctx = canvas.getContext("2d");
     const dpr = window.devicePixelRatio || 1;
 
-    // Fixed logical dimensions
-    const width = 280;
-    const height = 160;
+    // Read dimensions from canvas attribute or default
+    const width = parseInt(canvas.getAttribute("width"), 10) || 240;
+    const height = parseInt(canvas.getAttribute("height"), 10) || 130;
 
     // Set internal resolution scaled by dpr
     canvas.width = width * dpr;
@@ -35,15 +35,16 @@ class ClinicalCharts {
     ctx.clearRect(0, 0, width, height);
 
     const centerX = width / 2;
-    const centerY = height - 20;
-    const radius = 95;
+    const centerY = height - 16;
+    const radius = Math.min(width / 2 - 14, height - 24);
     const startAngle = Math.PI;
     const endAngle = 2 * Math.PI;
+    const arcWidth = Math.max(9, Math.round(radius * 0.14));
 
     // Background Arc Track
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-    ctx.lineWidth = 14;
+    ctx.lineWidth = arcWidth;
     ctx.strokeStyle = "#e2e8f0";
     ctx.lineCap = "round";
     ctx.stroke();
@@ -61,7 +62,7 @@ class ClinicalCharts {
 
       ctx.beginPath();
       ctx.arc(centerX, centerY, radius, startAngle, currentAngle);
-      ctx.lineWidth = 14;
+      ctx.lineWidth = arcWidth;
       ctx.strokeStyle = gradient;
       ctx.lineCap = "round";
       ctx.stroke();
@@ -69,7 +70,7 @@ class ClinicalCharts {
 
     // Needle indicator
     const needleAngle = startAngle + (clampedScore / 100) * Math.PI;
-    const needleLen = radius - 18;
+    const needleLen = radius - 14;
     const needleX = centerX + Math.cos(needleAngle) * needleLen;
     const needleY = centerY + Math.sin(needleAngle) * needleLen;
 

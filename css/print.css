@@ -1,20 +1,26 @@
 /* ==========================================================================
    AegisHealth AI - Hospital Print & PDF Export Stylesheet
+   Ensures uncurtailed, full clinical intelligence dossiers across printable pages
    ========================================================================== */
 
 @media print {
   @page {
     size: A4 portrait;
-    margin: 15mm 15mm 15mm 15mm;
+    margin: 12mm 15mm 15mm 15mm;
   }
 
-  body {
-    background: #fff !important;
-    color: #111827 !important;
-    font-size: 11pt !important;
+  /* Reset global viewport & body for multi-page document pagination */
+  html, body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 10pt !important;
     line-height: 1.4 !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
   }
 
+  /* Hide interactive web UI controls, navigation chrome, modals, buttons */
   body::before,
   .app-header,
   .app-nav,
@@ -23,9 +29,12 @@
   .btn,
   .modal-overlay,
   .toast-container,
+  #auditHistoryPopover,
+  #auditHistoryBox,
   #tab-overview,
   #tab-whatif-simulator,
-  #tab-cohort-manager {
+  #tab-cohort-manager,
+  .header-ai-actions {
     display: none !important;
   }
 
@@ -35,84 +44,226 @@
     margin: 0 !important;
     max-width: 100% !important;
     min-height: auto !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 
   #tab-patient-analysis {
     display: block !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 
-  /* Print Clinical Header */
+  /* Expand 3-column layout into sequential unclipped printable flow */
   .clinical-workspace-grid {
     display: block !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 
+  .col-patient-vitals,
+  .col-patient-algorithms,
+  .col-patient-ai {
+    display: block !important;
+    width: 100% !important;
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+  }
+
+  /* Patient Summary Command Banner */
   .patient-select-bar {
     background: #f8fafc !important;
     border: 1px solid #cbd5e1 !important;
     color: #0f172a !important;
-    border-radius: 0 !important;
-    margin-bottom: 15px !important;
+    border-radius: 4px !important;
+    padding: 10px 14px !important;
+    margin-bottom: 14px !important;
+    box-shadow: none !important;
     page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  .patient-bio-chip {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
   }
 
   .bio-val {
     color: #0f172a !important;
   }
 
-  .card {
-    background: #fff !important;
+  .header-acuity-panel {
+    background: #f8fafc !important;
     border: 1px solid #cbd5e1 !important;
     box-shadow: none !important;
+    margin-left: 0 !important;
+    margin-top: 10px;
+  }
+
+  /* Cards styling */
+  .card {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    margin-bottom: 14px !important;
+    border-radius: 4px !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Standard discrete cards avoid splitting midway, AI Dossier paginates freely */
+  .card:not(.ai-dossier-card) {
     page-break-inside: avoid;
-    margin-bottom: 15px !important;
+    break-inside: avoid;
   }
 
   .card-header {
     background: #f1f5f9 !important;
     border-bottom: 1px solid #cbd5e1 !important;
     color: #0f172a !important;
+    padding: 8px 12px !important;
   }
 
   .card-title {
     color: #0f172a !important;
-    font-size: 12pt !important;
+    font-size: 11pt !important;
+    font-weight: 700 !important;
+  }
+
+  .card-body {
+    padding: 10px 14px !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* Biomarkers Table unclipped */
+  .biomarkers-table-wrapper {
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
   }
 
   .clinical-table th {
     background: #f8fafc !important;
     color: #334155 !important;
-    border-bottom: 1px solid #cbd5e1 !important;
+    border-bottom: 1.5px solid #94a3b8 !important;
+    padding: 6px 10px !important;
+    font-size: 8.5pt !important;
   }
 
   .clinical-table td {
     color: #0f172a !important;
     border-bottom: 1px solid #e2e8f0 !important;
+    padding: 6px 10px !important;
+    font-size: 9pt !important;
   }
 
+  /* Bedside Vitals Grid in print */
+  .vital-tiles-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .vital-tile {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    padding: 8px 10px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .vital-tile-value {
+    color: #0f172a !important;
+    font-size: 1.3rem !important;
+  }
+
+  /* ==========================================================================
+     FULL AI CLINICAL INTELLIGENCE REPORT - UNCURTAILED MULTI-PAGE EXPANSION
+     ========================================================================== */
   .ai-dossier-card {
-    border: 1px solid #0284c7 !important;
+    border: 1.5px solid #0d9488 !important;
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    margin-top: 15px !important;
   }
 
-  .ai-narrative-box,
-  .action-plan-item,
+  #aiResultsContainer,
+  .ai-content-view {
+    display: block !important;
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+    overflow-y: visible !important;
+    overflow-x: visible !important;
+    padding-right: 0 !important;
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+  }
+
+  .ai-section {
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+    margin-bottom: 14px !important;
+  }
+
+  .ai-narrative-box {
+    background: #f0fdfa !important;
+    border: 1px solid #99f6e4 !important;
+    color: #0f172a !important;
+    padding: 12px 14px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    border-radius: 4px !important;
+  }
+
   .diff-card,
-  .xai-driver-row {
+  .test-card,
+  .action-plan-item,
+  .xai-driver-row,
+  .score-row {
     background: #f8fafc !important;
     border: 1px solid #e2e8f0 !important;
     color: #1e293b !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-bottom: 8px !important;
+    box-shadow: none !important;
+  }
+
+  .diff-title,
+  .test-name,
+  .action-intervention {
+    color: #0f172a !important;
+    font-weight: 700 !important;
   }
 
   .text-danger, .badge-danger { color: #dc2626 !important; }
   .text-warning, .badge-warning { color: #d97706 !important; }
   .text-success, .badge-success { color: #059669 !important; }
 
+  /* Hide scrollbars during print */
+  ::-webkit-scrollbar {
+    display: none !important;
+  }
+
   .print-footer-notice {
     display: block !important;
     margin-top: 25px;
     padding-top: 10px;
     border-top: 1px dashed #94a3b8;
-    font-size: 9pt;
+    font-size: 8.5pt;
     color: #64748b;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
 }
 

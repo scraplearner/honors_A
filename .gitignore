@@ -1,0 +1,14 @@
+# Node & System files
+node_modules/
+.DS_Store
+Thumbs.db
+
+# Environment variables & secrets
+.env
+.env.*
+env.js
+
+# Temporary logs & IDE caches
+*.log
+.idea/
+.vscode/

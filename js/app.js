@@ -43,14 +43,22 @@ class AegisApp {
 
   setupPatientModal() {
     const modal = document.getElementById("modalPatientForm");
+    const modalTitle = document.getElementById("modalPatientTitle");
+    const submitBtn = document.getElementById("btnSubmitPatient");
     const btnOpen = document.getElementById("btnNewPatient");
     const btnOpenFromCohort = document.getElementById("btnAddNewPatientFromCohort");
     const btnClose = document.getElementById("btnClosePatientModal");
     const btnCancel = document.getElementById("btnCancelPatientModal");
     const form = document.getElementById("newPatientForm");
+    const modeInput = document.getElementById("formPatientMode");
+    const idInput = document.getElementById("formPatientId");
 
-    const openModal = () => {
+    const openNewModal = () => {
       if (form) form.reset();
+      if (modeInput) modeInput.value = "create";
+      if (idInput) idInput.value = "";
+      if (modalTitle) modalTitle.textContent = "Register New Clinical Inpatient";
+      if (submitBtn) submitBtn.textContent = "Save & Calculate Risk Profile";
       if (modal) modal.classList.remove("hidden");
     };
 
@@ -58,8 +66,8 @@ class AegisApp {
       if (modal) modal.classList.add("hidden");
     };
 
-    if (btnOpen) btnOpen.addEventListener("click", openModal);
-    if (btnOpenFromCohort) btnOpenFromCohort.addEventListener("click", openModal);
+    if (btnOpen) btnOpen.addEventListener("click", openNewModal);
+    if (btnOpenFromCohort) btnOpenFromCohort.addEventListener("click", openNewModal);
     if (btnClose) btnClose.addEventListener("click", closeModal);
     if (btnCancel) btnCancel.addEventListener("click", closeModal);
 
@@ -67,10 +75,13 @@ class AegisApp {
       form.addEventListener("submit", (e) => {
         e.preventDefault();
 
+        const isEditMode = (modeInput?.value === "edit");
+        const targetPatientId = idInput?.value;
+
         const historyVal = document.getElementById("formHistory").value.trim();
         const medsVal = document.getElementById("formMedications").value.trim();
 
-        const newPatient = {
+        const patientData = {
           name: document.getElementById("formName").value.trim(),
           age: parseInt(document.getElementById("formAge").value, 10),
           gender: document.getElementById("formGender").value,
@@ -98,10 +109,66 @@ class AegisApp {
             lactate: parseFloat(document.getElementById("formLactate").value),
             crp: parseFloat(document.getElementById("formCrp").value)
           },
-          notes: "Bedside initial intake documentation completed."
+          notes: "Bedside intake records active."
         };
 
-        const created = window.PatientStore.addPatient(newPatient);
+        if (isEditMode && targetPatientId) {
+          const original = window.PatientStore.getPatientById(targetPatientId);
+          if (original) {
+            // Compute detailed field-level diffs
+            const diffs = [];
+            const checkDiff = (field, oldVal, newVal, unit = "") => {
+              const oStr = `${oldVal !== undefined ? oldVal : ''}${unit ? ' ' + unit : ''}`.trim();
+              const nStr = `${newVal !== undefined ? newVal : ''}${unit ? ' ' + unit : ''}`.trim();
+              if (oStr !== nStr) {
+                diffs.push({ field, from: oStr, to: nStr });
+              }
+            };
+
+            checkDiff("Full Name", original.name, patientData.name);
+            checkDiff("Age", original.age, patientData.age, "years");
+            checkDiff("Gender", original.gender, patientData.gender);
+            checkDiff("MRN", original.mrn, patientData.mrn);
+            checkDiff("Ward", original.ward, patientData.ward);
+            checkDiff("Bed", original.bed, patientData.bed);
+            checkDiff("Smoking Status", original.smoking, patientData.smoking);
+            checkDiff("Systolic BP", original.vitals?.sysBP, patientData.vitals.sysBP, "mmHg");
+            checkDiff("Diastolic BP", original.vitals?.diaBP, patientData.vitals.diaBP, "mmHg");
+            checkDiff("Heart Rate", original.vitals?.heartRate, patientData.vitals.heartRate, "bpm");
+            checkDiff("SpO2", original.vitals?.spO2, patientData.vitals.spO2, "%");
+            checkDiff("Resp Rate", original.vitals?.respRate, patientData.vitals.respRate, "/min");
+            checkDiff("Temperature", original.vitals?.temp, patientData.vitals.temp, "°C");
+            checkDiff("Blood Glucose", original.biomarkers?.glucose, patientData.biomarkers.glucose, "mg/dL");
+            checkDiff("Serum Creatinine", original.biomarkers?.creatinine, patientData.biomarkers.creatinine, "mg/dL");
+            checkDiff("eGFR", original.biomarkers?.egfr, patientData.biomarkers.egfr, "mL/min");
+            checkDiff("Troponin-I", original.biomarkers?.troponin, patientData.biomarkers.troponin, "ng/mL");
+            checkDiff("WBC Count", original.biomarkers?.wbc, patientData.biomarkers.wbc, "k/µL");
+            checkDiff("Serum Lactate", original.biomarkers?.lactate, patientData.biomarkers.lactate, "mmol/L");
+            checkDiff("hs-CRP", original.biomarkers?.crp, patientData.biomarkers.crp, "mg/L");
+            checkDiff("Medical History", (original.history || []).join(", "), (patientData.history || []).join(", "));
+            checkDiff("Medications", (original.medications || []).join(", "), (patientData.medications || []).join(", "));
+
+            // Record audit trail
+            window.PatientStore.recordEditAudit(
+              original.id,
+              patientData.name,
+              diffs.length > 0 ? diffs : [{ field: "Clinical Dossier", from: "Baseline confirmed", to: "Re-certified with no changes" }]
+            );
+
+            // Update patient in store
+            const updated = window.PatientStore.updatePatient(original.id, patientData);
+            closeModal();
+
+            // Re-render views
+            window.Ui.renderPatientWorkspace(updated);
+            window.Ui.renderCohortTable();
+            window.Ui.showToast(`Patient ${updated.name} updated successfully! (${diffs.length} change${diffs.length === 1 ? '' : 's'} logged)`, "success");
+            return;
+          }
+        }
+
+        // Create new patient flow
+        const created = window.PatientStore.addPatient(patientData);
         closeModal();
         window.Ui.showToast(`Patient ${created.name} registered successfully!`, "success");
 
@@ -123,30 +190,74 @@ class AegisApp {
       });
     }
 
+    // Edit Patient button in the tab bar
+    const btnEdit = document.getElementById("btnEditPatient");
+    if (btnEdit) {
+      btnEdit.addEventListener("click", () => {
+        const active = window.PatientStore.getActivePatient();
+        if (active) window.Ui.openEditPatientModal(active);
+      });
+    }
+
+    // Audit History click opening box & popover toggle
+    const btnAudit = document.getElementById("btnAuditToggle");
+    const auditPopover = document.getElementById("auditHistoryPopover");
+    const btnCloseAudit = document.getElementById("btnCloseAuditPopover");
+    const auditBox = document.getElementById("auditHistoryBox");
+
+    if (btnAudit && auditPopover) {
+      btnAudit.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const willShow = auditPopover.classList.contains("hidden");
+        if (willShow) {
+          const active = window.PatientStore.getActivePatient();
+          if (active) window.Ui.renderAuditHistory(active);
+          auditPopover.classList.remove("hidden");
+        } else {
+          auditPopover.classList.add("hidden");
+        }
+      });
+    }
+
+    if (btnCloseAudit && auditPopover) {
+      btnCloseAudit.addEventListener("click", (e) => {
+        e.stopPropagation();
+        auditPopover.classList.add("hidden");
+      });
+    }
+
+    // Dismiss audit popover when clicking anywhere outside
+    document.addEventListener("click", (e) => {
+      if (auditBox && !auditBox.contains(e.target) && auditPopover && !auditPopover.classList.contains("hidden")) {
+        auditPopover.classList.add("hidden");
+      }
+    });
+
     // Export Clinical Report print button
     const btnPrint = document.getElementById("btnPrintReport");
     if (btnPrint) {
-      btnPrint.addEventListener("click", () => {
+      btnPrint.addEventListener("click", async () => {
         const patient = window.PatientStore.getActivePatient();
+        if (!patient) return;
+
+        // If the AI clinical intelligence report hasn't been generated yet for this patient, generate it first
+        if (!window.Ui.currentAiResults || window.Ui.currentAiResults.patientId !== patient.id) {
+          window.Ui.showToast("Synthesizing full AI Clinical Intelligence for report export...", "info");
+          await window.Ui.generateAiReportForActivePatient();
+        }
+
         const risk = window.RiskEngine.calculateCompositeAcuity(patient);
         const ai = window.Ui.currentAiResults?.patientId === patient.id ? window.Ui.currentAiResults.data : null;
         window.ReportGenerator.printPatientReport(patient, risk, ai);
       });
     }
 
-    // Generate AI Prediction Report button (Sends patient data to API key and generates prediction)
+    // Re-evaluate CDS Analysis button
     const btnAiReport = document.getElementById("btnGenerateAiReport");
-    const btnAiReportCenter = document.getElementById("btnGenerateReportCenter");
-
-    const handleGenerateReport = async () => {
-      await window.Ui.generateAiReportForActivePatient();
-    };
-
     if (btnAiReport) {
-      btnAiReport.addEventListener("click", handleGenerateReport);
-    }
-    if (btnAiReportCenter) {
-      btnAiReportCenter.addEventListener("click", handleGenerateReport);
+      btnAiReport.addEventListener("click", async () => {
+        await window.Ui.generateAiReportForActivePatient();
+      });
     }
   }
 
@@ -166,6 +277,13 @@ class AegisApp {
     if (patient) {
       window.Ui.renderPatientWorkspace(patient);
       window.Ui.switchTab("tab-patient-analysis");
+    }
+  }
+
+  openEditPatientModal(patientId) {
+    const patient = patientId ? window.PatientStore.getPatientById(patientId) : window.PatientStore.getActivePatient();
+    if (patient) {
+      window.Ui.openEditPatientModal(patient);
     }
   }
 

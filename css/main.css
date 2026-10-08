@@ -1,40 +1,60 @@
 /* ==========================================================================
-   AegisHealth AI - Main Stylesheet (Clean, Soft Healthcare Theme - Light Contrast)
+   AegisHealth AI - Main Stylesheet
+   Design Philosophy: Skeuomorphism + Glassmorphism + Spatial UI
    ========================================================================== */
 
 :root {
-  /* Canvas & Surfaces */
-  --bg-dark: #f8fafc;
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #f1f5f9;
-  --bg-card: #ffffff;
-  --bg-card-border: #e2e8f0;
-  --bg-glass: rgba(255, 255, 255, 0.95);
-  --glass-blur: blur(8px);
+  /* Spatial Atmosphere & Lighting */
+  --bg-dark: #f0f4f8;
+  --spatial-bg: radial-gradient(circle at 12% 18%, rgba(13, 148, 136, 0.12) 0%, transparent 42%),
+                radial-gradient(circle at 88% 22%, rgba(2, 132, 199, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 85%, rgba(99, 102, 241, 0.08) 0%, transparent 55%),
+                #f1f5f9;
 
-  /* Healthy Healthcare Color Palette */
+  /* Frosted Glass Acrylic Surfaces */
+  --glass-surface: rgba(255, 255, 255, 0.72);
+  --glass-surface-elevated: rgba(255, 255, 255, 0.85);
+  --glass-surface-subtle: rgba(248, 250, 252, 0.65);
+  --glass-blur: blur(20px) saturate(190%);
+  --glass-blur-heavy: blur(28px) saturate(210%);
+  --glass-border: rgba(255, 255, 255, 0.82);
+  --glass-border-subtle: rgba(226, 232, 240, 0.7);
+
+  /* Skeuomorphic Tactile Metals & Bezels */
+  --skeuo-bevel-top: inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.95);
+  --skeuo-bevel-bottom: inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.05);
+  --skeuo-inset-well: inset 0 2px 4px rgba(15, 23, 42, 0.06), inset 0 0 0 1px rgba(226, 232, 240, 0.8);
+  --skeuo-btn-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.6);
+  --skeuo-btn-shadow: 0 3px 6px -1px rgba(15, 23, 42, 0.12), 0 1px 3px 0 rgba(15, 23, 42, 0.08);
+
+  /* Spatial Floating Elevations */
+  --spatial-shadow-dock: 0 20px 45px -12px rgba(15, 23, 42, 0.12), 0 8px 18px -6px rgba(15, 23, 42, 0.06);
+  --spatial-shadow-card: 0 14px 34px -10px rgba(15, 23, 42, 0.09), 0 4px 12px -3px rgba(15, 23, 42, 0.05);
+  --spatial-shadow-hover: 0 22px 45px -10px rgba(15, 23, 42, 0.15), 0 10px 20px -5px rgba(15, 23, 42, 0.08);
+
+  /* Clinical Color Palette */
   --health-teal: #0d9488;
   --health-teal-dark: #0f766e;
   --health-emerald: #059669;
   --health-emerald-dark: #047857;
   --primary: #0284c7;
-  --primary-glow: rgba(2, 132, 199, 0.15);
-  --teal-glow: rgba(13, 148, 136, 0.18);
-  --emerald-glow: rgba(5, 150, 105, 0.18);
+  --primary-dark: #0369a1;
+  --teal-glow: rgba(13, 148, 136, 0.28);
+  --emerald-glow: rgba(5, 150, 105, 0.25);
 
-  /* Soft, High-Contrast Clinical Status Tones */
+  /* High-Contrast Clinical Status Tones */
   --status-critical: #e11d48;
-  --status-critical-glow: rgba(225, 29, 72, 0.2);
-  --status-critical-bg: #ffe4e6;
+  --status-critical-glow: rgba(225, 29, 72, 0.25);
+  --status-critical-bg: rgba(255, 228, 230, 0.85);
   --status-warning: #d97706;
-  --status-warning-glow: rgba(217, 119, 6, 0.2);
-  --status-warning-bg: #fef3c7;
+  --status-warning-glow: rgba(217, 119, 6, 0.25);
+  --status-warning-bg: rgba(254, 243, 199, 0.85);
   --status-info: #0284c7;
-  --status-info-glow: rgba(2, 132, 199, 0.2);
-  --status-info-bg: #e0f2fe;
+  --status-info-glow: rgba(2, 132, 199, 0.25);
+  --status-info-bg: rgba(224, 242, 254, 0.85);
   --status-stable: #059669;
-  --status-stable-glow: rgba(5, 150, 105, 0.2);
-  --status-stable-bg: #d1fae5;
+  --status-stable-glow: rgba(5, 150, 105, 0.25);
+  --status-stable-bg: rgba(209, 250, 229, 0.85);
 
   /* Typography Colors */
   --text-main: #0f172a;
@@ -42,23 +62,19 @@
   --text-muted: #64748b;
   --text-dim: #94a3b8;
 
-  /* Soft Neutral Typography */
+  /* Typography */
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-display: 'Plus Jakarta Sans', var(--font-sans);
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Elevation & Shadows */
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
-  --shadow-md: 0 4px 8px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 12px 20px -3px rgba(15, 23, 42, 0.09), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
-  --shadow-hero: 0 6px 20px rgba(13, 148, 136, 0.35);
-
   /* Borders & Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
+  --radius-sm: 9px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 26px;
   --radius-full: 9999px;
-  --transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  --spring-transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.24s ease;
 }
 
 * {
@@ -70,7 +86,8 @@
 html, body {
   width: 100%;
   min-height: 100vh;
-  background-color: var(--bg-dark);
+  background: var(--spatial-bg);
+  background-attachment: fixed;
   color: var(--text-main);
   font-family: var(--font-sans);
   font-size: 15.5px;
@@ -79,15 +96,15 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Subtle, Soft Ambient Tint */
+/* Spatial Ambient Light Dome */
 body::before {
   content: '';
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 400px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(13, 148, 136, 0.07), transparent 70%);
+  height: 520px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(13, 148, 136, 0.12), transparent 75%);
   pointer-events: none;
   z-index: 0;
 }
@@ -101,33 +118,41 @@ body::before {
   min-height: 100vh;
 }
 
-/* Top App Header */
+/* ==========================================================================
+   Top App Header (Skeuo-Glass Spatial Bar)
+   ========================================================================== */
 .app-header {
-  height: 78px;
-  padding: 0 2.5rem;
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--bg-card-border);
+  height: 80px;
+  padding: 0 2.8rem;
+  background: var(--glass-surface);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95);
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
-  z-index: 50;
-  box-shadow: var(--shadow-sm);
+  z-index: 100;
 }
 
 .header-brand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 15px;
 }
 
+/* Skeuomorphic Glass Emblem */
 .brand-icon {
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, rgba(13, 148, 136, 0.15), rgba(5, 150, 105, 0.25));
-  border: 1.5px solid var(--health-teal);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(209, 250, 229, 0.7));
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 16px -2px rgba(13, 148, 136, 0.25),
+              inset 0 1.5px 1.5px rgba(255, 255, 255, 1),
+              inset 0 -1.5px 2px rgba(5, 150, 105, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -135,8 +160,9 @@ body::before {
 }
 
 .brand-icon svg {
-  width: 26px;
-  height: 26px;
+  width: 27px;
+  height: 27px;
+  filter: drop-shadow(0 1px 2px rgba(13, 148, 136, 0.3));
 }
 
 .brand-titles {
@@ -146,36 +172,41 @@ body::before {
 
 .brand-name {
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   font-weight: 800;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.028em;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   color: var(--text-main);
   line-height: 1.1;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
 }
 
 .brand-accent {
-  color: var(--health-teal);
+  background: linear-gradient(135deg, var(--health-teal), #0284c7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .badge-ai {
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  font-weight: 700;
-  padding: 2px 8px;
+  font-weight: 800;
+  padding: 3px 9px;
   border-radius: var(--radius-full);
-  background: #d1fae5;
-  border: 1px solid #10b981;
-  color: #047857;
+  background: linear-gradient(180deg, #d1fae5 0%, #a7f3d0 100%);
+  border: 1px solid #34d399;
+  color: #065f46;
+  box-shadow: 0 2px 5px rgba(5, 150, 105, 0.18), inset 0 1px 0.5px #fff;
+  letter-spacing: 0.04em;
 }
 
 .brand-subtitle {
   font-size: 0.82rem;
   color: var(--text-muted);
   margin-top: 3px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .header-actions {
@@ -184,34 +215,40 @@ body::before {
   gap: 14px;
 }
 
-/* BIG AND PRONOUNCED Add Patient Button */
+/* Tactile Skeuomorphic Hero Button */
 .btn-add-patient-hero {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   font-weight: 700;
-  padding: 0.75rem 1.75rem;
+  padding: 0.78rem 1.85rem;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+  background: linear-gradient(180deg, #10b981 0%, #0d9488 70%, #0f766e 100%);
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: var(--shadow-hero);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 6px 18px rgba(13, 148, 136, 0.38),
+              inset 0 1.5px 1px rgba(255, 255, 255, 0.45),
+              inset 0 -2px 3px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  transition: var(--transition);
+  transition: var(--spring-transition);
   letter-spacing: -0.01em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
 .btn-add-patient-hero:hover {
-  filter: brightness(1.08);
-  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.45);
-  transform: translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow: 0 10px 26px rgba(13, 148, 136, 0.48),
+              inset 0 1.5px 1px rgba(255, 255, 255, 0.55);
+  transform: translateY(-2px) scale(1.015);
 }
 
 .btn-add-patient-hero:active {
-  transform: translateY(0);
+  transform: translateY(1.5px) scale(0.985);
+  box-shadow: 0 2px 6px rgba(13, 148, 136, 0.3),
+              inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .icon-hero {
@@ -219,28 +256,39 @@ body::before {
   height: 22px;
 }
 
-/* Navigation Bar */
+/* ==========================================================================
+   Navigation Bar (Spatial Floating Control Strip)
+   ========================================================================== */
 .app-nav {
-  height: 56px;
-  padding: 0 2.5rem;
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--bg-card-border);
+  min-height: 60px;
+  height: auto;
+  padding: 0.6rem 2.8rem;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.02);
+  position: relative;
+  z-index: 95;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
+/* Tactile Navigation Pill Tabs */
 .nav-tab {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 18px;
+  gap: 9px;
+  padding: 9px 20px;
   border-radius: var(--radius-md);
   border: 1px solid transparent;
   background: transparent;
@@ -255,93 +303,74 @@ body::before {
 .nav-tab svg {
   width: 18px;
   height: 18px;
+  transition: var(--transition);
 }
 
 .nav-tab:hover {
   color: var(--text-main);
-  background: #f1f5f9;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .nav-tab.active {
-  color: #0f172a;
-  background: #f1f5f9;
-  border-color: #cbd5e1;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  color: var(--health-teal-dark);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.07),
+              inset 0 1px 0.5px rgba(255, 255, 255, 1),
+              inset 0 -1px 1px rgba(0, 0, 0, 0.03);
+}
+
+.nav-tab.active svg {
+  color: var(--health-teal);
 }
 
 .active-patient-pill {
-  font-size: 0.75rem;
-  background: var(--status-info-bg);
-  color: var(--status-info);
+  font-size: 0.76rem;
+  font-weight: 700;
   padding: 3px 10px;
   border-radius: var(--radius-full);
-  font-weight: 700;
-  pointer-events: none;
-  user-select: none;
+  background: linear-gradient(180deg, #ccfbf1 0%, #99f6e4 100%);
+  color: #0f766e;
+  border: 1px solid #5eead4;
+  box-shadow: inset 0 1px 0.5px #fff;
+  margin-left: 4px;
 }
 
-/* App Main Content Area */
+.nav-patient-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* App Main Canvas Content Area */
 .app-content {
   flex: 1;
-  padding: 2rem 2.5rem 3rem 2.5rem;
-  max-width: 1650px;
+  padding: 1.8rem 2.8rem;
+  max-width: 1720px;
   width: 100%;
   margin: 0 auto;
 }
 
 .tab-pane {
   display: none;
-  animation: fadeIn 0.2s ease-out;
+  animation: spatialFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .tab-pane.active {
   display: block;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Cards & Layout */
-.card {
-  background: var(--bg-card);
-  border: 1px solid var(--bg-card-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  transition: var(--transition);
-}
-
-.card:hover {
-  box-shadow: var(--shadow-md);
-}
-
-.card-header {
-  padding: 1.25rem 1.6rem;
-  border-bottom: 1px solid var(--bg-card-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.card-title {
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--text-main);
-  letter-spacing: -0.015em;
-}
-
-.card-subtitle {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
-.card-body {
-  padding: 1.4rem 1.6rem;
-  flex: 1;
+@keyframes spatialFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .card-body.p-0 {
@@ -349,9 +378,9 @@ body::before {
 }
 
 /* Responsive queries */
-@media (max-width: 992px) {
+@media (max-width: 1100px) {
   .app-header {
-    padding: 0 1.25rem;
+    padding: 0 1.4rem;
     height: auto;
     padding-top: 1rem;
     padding-bottom: 1rem;
@@ -359,10 +388,10 @@ body::before {
     gap: 12px;
   }
   .app-nav {
-    padding: 0 1.25rem;
+    padding: 0.6rem 1.4rem;
     overflow-x: auto;
   }
   .app-content {
-    padding: 1.25rem;
+    padding: 1.4rem;
   }
 }

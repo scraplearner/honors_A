@@ -291,6 +291,67 @@ class PatientDataManager {
     this.setActivePatientId(defaults[0].id);
     return defaults;
   }
+
+  // --- Audit History Management ---
+  loadAuditLogs() {
+    try {
+      const stored = localStorage.getItem("patient_edit_audit_logs");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {
+      console.warn("Failed to parse audit history:", e);
+    }
+    return [];
+  }
+
+  saveAuditLogs(logs) {
+    try {
+      localStorage.setItem("patient_edit_audit_logs", JSON.stringify(logs));
+    } catch (e) {
+      console.error("Failed to save audit logs to localStorage:", e);
+    }
+  }
+
+  recordEditAudit(patientId, patientName, changes) {
+    const logs = this.loadAuditLogs();
+    const patientLogs = logs.filter(l => l.patientId === patientId);
+    const editNumber = patientLogs.length + 1;
+    
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    }) + " " + now.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+    const entry = {
+      id: "audit_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+      editNumber,
+      patientId,
+      patientName,
+      date: formattedDate,
+      timestamp: now.toISOString(),
+      changes: changes || []
+    };
+
+    logs.unshift(entry);
+    this.saveAuditLogs(logs);
+    return entry;
+  }
+
+  getAuditLogsForPatient(patientId) {
+    const logs = this.loadAuditLogs();
+    return logs.filter(l => l.patientId === patientId);
+  }
+
+  getAuditCountForPatient(patientId) {
+    return this.getAuditLogsForPatient(patientId).length;
+  }
 }
 
 // Global singleton instance
